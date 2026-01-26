@@ -19,4 +19,17 @@
             }
         }
     }
+
+    post {
+        success {
+            mail to: 'your-email@example.com',
+                 subject: "Success: Pipeline ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                 body: "The pipeline finished successfully. Check it out at ${env.BUILD_URL}"
+        }
+        failure {
+            mail to: 'your-email@example.com',
+                 subject: "Failed: Pipeline ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                 body: "The pipeline failed. Review the logs at ${env.BUILD_URL}"
+        }
+    }
 }
