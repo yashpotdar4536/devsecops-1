@@ -8,17 +8,19 @@ pipeline {
             }
         }
 
-        stage('Ansible Infra Setup') {
-            steps {
-                ansiblePlaybook(
-                    playbook: 'apache.yml',
-                    inventory: 'inventory.ini',
-                    credentialsId: 'ec2-ssh-key',
-                    colorized: true,
-                    disableHostKeyChecking: true
-                )
-            }
-        }
+       stage('Ansible Infra Setup') {
+    steps {
+        // This 'installation' name must match the name you set in Global Tool Configuration
+        ansiblePlaybook(
+            playbook: 'apache.yml',
+            inventory: 'inventory.ini',
+            credentialsId: 'ec2-ssh-key',
+            colorized: true,
+            disableHostKeyChecking: true,
+            installation: 'Ansible' 
+        )
+    }
+}
 
         stage('Docker image build') {
             steps {
