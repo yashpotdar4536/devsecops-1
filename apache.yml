@@ -2,6 +2,7 @@
 - name: Setup Apache as Reverse Proxy
   hosts: all
   become: yes
+  gather_facts: no
   tasks:
     - name: Install Apache2
       apt:
