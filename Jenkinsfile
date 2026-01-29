@@ -9,6 +9,9 @@ pipeline {
         }
 
        stage('Ansible Infra Setup') {
+           when {
+        changeset "apache.yml" // Only runs if the playbook file was changed
+    }
     steps {
         // This 'installation' name must match the name you set in Global Tool Configuration
         ansiblePlaybook(
