@@ -41,7 +41,7 @@ pipeline {
         success {
             mail to: 'yashpotdar4536@gmail.com',
                  subject: "Success: Pipeline ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: "Deployment successful! View site at http://13.49.77.217"
+                 body: "Deployment successful! View site at http://192.168.56.147"
         }
         failure {
             mail to: 'yashpotdar4536@gmail.com',
