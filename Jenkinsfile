@@ -21,7 +21,7 @@ pipeline {
         ansiblePlaybook(
             playbook: 'apache.yml',
             inventory: 'inventory.ini',
-            credentialsId: 'ec2-ssh-key',
+            credentialsId: 'ec2-private-key',
             colorized: true,
             disableHostKeyChecking: true,
             installation: 'Ansible' 
