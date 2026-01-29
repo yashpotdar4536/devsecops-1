@@ -11,7 +11,7 @@ pipeline {
         stage('Ansible Infra Setup') {
             steps {
                 ansiblePlaybook(
-                    playbook: 'apache_setup.yml',
+                    playbook: 'apache.yml',
                     inventory: 'inventory.ini',
                     credentialsId: 'ec2-ssh-key',
                     colorized: true,
