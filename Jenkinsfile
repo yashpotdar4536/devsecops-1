@@ -2,20 +2,37 @@ pipeline {
     agent any
 
     stages {
-        stage('GitHub config') {
+        stage('GitHub Checkout') {
             steps {
-                git url:'https://github.com/yashpotdar4536/devsecops-1.git', branch:'main'
+                git url: 'https://github.com/yashpotdar4536/devsecops-1.git', branch: 'main'
             }
         }
-        stage('Docker image build') {
+
+        stage('Docker Image Build') {
             steps {
-                sh 'docker build -t myapp .'
+                // Builds the Nginx image using your Dockerfile
+                sh 'docker build -t myapp:latest .'
             }
         }
-        stage('Docker container build') {
+
+        stage('Deploy Nginx (Docker)') {
             steps {
+                // Cleans up old container and runs new one on Port 80
                 sh 'docker rm -f myappcontainer || true'
-                sh 'docker run -d --name myappcontainer -p 80:80 myapp' 
+                sh 'docker run -d --name myappcontainer -p 80:80 myapp:latest'
+            }
+        }
+
+        stage('Ansible Deploy Apache') {
+            steps {
+                // Triggers the playbook to install Apache on Port 8081
+                // Ensure 'Ansible' is the name configured in Global Tool Configuration
+                ansiblePlaybook(
+                    playbook: 'apache.yml',
+                    inventory: 'inventory.ini',
+                    installation: 'Ansible',
+                    colorized: true
+                )
             }
         }
     }
@@ -24,13 +41,15 @@ pipeline {
         success {
             mail to: 'yashpotdar4536@gmail.com',
                  subject: "Success: Pipeline ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: "The pipeline finished successfully. Check it out at ${env.BUILD_URL}"
+                 body: "The deployment was successful. Nginx is on port 80 and Apache is on 8081."
         }
         failure {
             mail to: 'yashpotdar4536@gmail.com',
                  subject: "Failed: Pipeline ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: "The pipeline failed. Review the logs at ${env.BUILD_URL}"
+                 body: "Pipeline failed. Check the Jenkins console logs for errors."
         }
+    }
+}
     }
 }
 
