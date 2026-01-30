@@ -5,6 +5,7 @@ pipeline {
         // This fixes the "unsupported locale setting" error for the jenkins user
         LC_ALL = 'en_IN.UTF-8'
         LANG   = 'en_IN.UTF-8'
+        LANGUAGE = 'en_IN.UTF-8'
     }
 
     stages {
