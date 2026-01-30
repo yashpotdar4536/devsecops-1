@@ -26,6 +26,7 @@ pipeline {
                 ansiblePlaybook(
                     playbook: 'apache.yml',
                     inventory: 'inventory.ini',
+                    credentialsId: 'node-ssh-key',
                     installation: 'Ansible',
                     colorized: true
                 )
