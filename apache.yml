@@ -7,7 +7,7 @@
       apt:
         name: apache2
         state: latest
-        update_cache: yes
+        update_cache: no
 
     - name: Set Port to 8081 in ports.conf
       copy:
