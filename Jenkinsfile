@@ -25,14 +25,14 @@ pipeline {
         stage('Trivy Security Scan') {
             steps {
                 script {
-                    echo "--- Phase 1: Filesystem Scan (Static Analysis) ---"
-                    // Scans your Dockerfile and code for misconfigurations
-                    sh 'trivy fs --severity HIGH,CRITICAL --exit-code 0 .'
+                    echo "--- Phase 1: Filesystem Scan ---"
+                    // We set TMPDIR to the current workspace to use your 87GB free space
+                    sh 'export TMPDIR=$WORKSPACE && trivy fs --severity HIGH,CRITICAL --exit-code 0 .'
                     
-                    echo "--- Phase 2: Image Scan (Vulnerability Analysis) ---"
-                    // Scans the built image layers. 
-                    // Added --scanners vuln and skipped Java DB to save disk space.
-                    sh 'trivy image --severity HIGH,CRITICAL --no-progress --scanners vuln --skip-java-db-update --exit-code 0 myapp:latest'
+                    echo "--- Phase 2: Image Scan ---"
+                    // --vuln-type os: Scans only the OS layers (avoids the heavy Java DB)
+                    // --no-progress: Keeps logs clean
+                    sh 'export TMPDIR=$WORKSPACE && trivy image --severity HIGH,CRITICAL --no-progress --vuln-type os --exit-code 0 myapp:latest'
                 }
             }
         }
