@@ -27,12 +27,12 @@ pipeline {
                 script {
                     echo "--- Phase 1: Filesystem Scan ---"
                     // We set TMPDIR to the current workspace to use your 87GB free space
-                    sh 'export TMPDIR=$WORKSPACE && trivy fs --severity HIGH,CRITICAL --exit-code 0 .'
+                    sh 'export TMPDIR=$WORKSPACE && trivy fs --severity HIGH,CRITICAL --exit-code 1 .'
                     
                     echo "--- Phase 2: Image Scan ---"
                     // --vuln-type os: Scans only the OS layers (avoids the heavy Java DB)
                     // --no-progress: Keeps logs clean
-                    sh 'export TMPDIR=$WORKSPACE && trivy image --severity HIGH,CRITICAL --no-progress --vuln-type os --exit-code 0 myapp:latest'
+                    sh 'export TMPDIR=$WORKSPACE && trivy image --severity HIGH,CRITICAL --no-progress --vuln-type os --exit-code 1 myapp:latest'
                 }
             }
         }
