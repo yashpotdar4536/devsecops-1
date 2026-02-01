@@ -2,6 +2,7 @@ pipeline {
     agent any
     
     environment {
+        // Fix for locale errors
         LC_ALL = 'en_IN.UTF-8'
         LANG   = 'en_IN.UTF-8'
         LANGUAGE = 'en_IN.UTF-8'
@@ -14,30 +15,31 @@ pipeline {
             }
         }
 
-        stage('Trivy FS Scan') {
-            steps {
-                echo "Scanning Project Files for Misconfigurations..."
-                // Scans your Dockerfile and Playbooks
-                sh 'trivy fs --severity HIGH,CRITICAL --exit-code 0 .'
-            }
-        }
-
         stage('Docker Image Build') {
             steps {
+                echo "Building Docker Image..."
                 sh 'docker build -t myapp:latest .'
             }
         }
 
-        stage('Trivy Image Scan') {
+        stage('Trivy Security Scan') {
             steps {
-                echo "Scanning Docker Image for Vulnerabilities..."
-                // Scans the actual built image
-                sh 'trivy image --severity HIGH,CRITICAL --no-progress --exit-code 0 myapp:latest'
+                script {
+                    echo "--- Phase 1: Filesystem Scan (Static Analysis) ---"
+                    // Scans your Dockerfile and code for misconfigurations
+                    sh 'trivy fs --severity HIGH,CRITICAL --exit-code 0 .'
+                    
+                    echo "--- Phase 2: Image Scan (Vulnerability Analysis) ---"
+                    // Scans the built image layers. 
+                    // Added --scanners vuln and skipped Java DB to save disk space.
+                    sh 'trivy image --severity HIGH,CRITICAL --no-progress --scanners vuln --skip-java-db-update --exit-code 0 myapp:latest'
+                }
             }
         }
 
         stage('Deploy Nginx (Docker)') {
             steps {
+                echo "Deploying Container to Port 80..."
                 sh 'docker rm -f myappcontainer || true'
                 sh 'docker run -d --name myappcontainer -p 80:80 myapp:latest'
             }
@@ -45,6 +47,7 @@ pipeline {
 
         stage('Ansible Deploy Apache') {
             steps {
+                echo "Configuring Apache on Port 8081..."
                 ansiblePlaybook(
                     playbook: 'apache.yml',
                     inventory: 'inventory.ini',
@@ -60,12 +63,16 @@ pipeline {
         success {
             mail to: 'yashpotdar4536@gmail.com',
                  subject: "Success: Pipeline ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: "Deployment successful. Trivy Security scans passed. Nginx is on port 80, Apache on 8081."
+                 body: "The deployment was successful. Security scans passed. Nginx is on port 80 and Apache is on 8081."
         }
         failure {
             mail to: 'yashpotdar4536@gmail.com',
                  subject: "Failed: Pipeline ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: "Pipeline failed. Check Jenkins logs for Trivy security findings or deployment errors."
+                 body: "Pipeline failed. Check Jenkins logs for Trivy findings or build errors."
+        }
+        always {
+            // Optional: Clean up workspace to save disk space after every run
+            cleanWs()
         }
     }
-}// End of Pipeline
+}
