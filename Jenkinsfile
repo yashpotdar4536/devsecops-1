@@ -54,6 +54,10 @@ pipeline {
                     credentialsId: 'node-ssh-key',
                     installation: 'Ansible',
                     colorized: true
+                    extraVars: [
+                        ansible_python_interpreter: '/usr/bin/python3',
+                        ansible_ssh_extra_args: '-o ControlMaster=no'
+                    ]
                 )
             }
         }
