@@ -2,7 +2,6 @@ pipeline {
     agent any
     
     environment {
-        // This fixes the "unsupported locale setting" error for the jenkins user
         LC_ALL = 'en_IN.UTF-8'
         LANG   = 'en_IN.UTF-8'
         LANGUAGE = 'en_IN.UTF-8'
@@ -15,9 +14,25 @@ pipeline {
             }
         }
 
+        stage('Trivy FS Scan') {
+            steps {
+                echo "Scanning Project Files for Misconfigurations..."
+                // Scans your Dockerfile and Playbooks
+                sh 'trivy fs --severity HIGH,CRITICAL --exit-code 0 .'
+            }
+        }
+
         stage('Docker Image Build') {
             steps {
                 sh 'docker build -t myapp:latest .'
+            }
+        }
+
+        stage('Trivy Image Scan') {
+            steps {
+                echo "Scanning Docker Image for Vulnerabilities..."
+                // Scans the actual built image
+                sh 'trivy image --severity HIGH,CRITICAL --no-progress --exit-code 0 myapp:latest'
             }
         }
 
@@ -39,18 +54,18 @@ pipeline {
                 )
             }
         }
-    } // End of Stages
+    }
 
     post {
         success {
             mail to: 'yashpotdar4536@gmail.com',
                  subject: "Success: Pipeline ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: "The deployment was successful. Nginx is on port 80 and Apache is on 8081."
+                 body: "Deployment successful. Trivy Security scans passed. Nginx is on port 80, Apache on 8081."
         }
         failure {
             mail to: 'yashpotdar4536@gmail.com',
                  subject: "Failed: Pipeline ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                 body: "Pipeline failed. Check the Jenkins console logs for errors."
+                 body: "Pipeline failed. Check Jenkins logs for Trivy security findings or deployment errors."
         }
-    } // End of Post
-} // End of Pipeline
+    }
+}// End of Pipeline
