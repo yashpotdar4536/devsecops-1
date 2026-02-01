@@ -1,7 +1,8 @@
 ---
 - name: Install and Configure Apache
   hosts: web
-  become: yes  # This is critical - it allows sudo
+  become: yes #This is critical - it allows sudo
+  gather_facts: no
   tasks:
     - name: Force Install Apache
       apt:
