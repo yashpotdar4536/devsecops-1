@@ -1,28 +1,23 @@
----
-- name: Install and Configure Apache
-  hosts: web
-  become: yes #This is critical - it allows sudo
-  gather_facts: yes
+- name: Deploy Custom Website to Node Server
+  hosts: all
+  become: true
   tasks:
-    - name: Force Install Apache
-      apt:
-        name: apache2
-        state: latest
-        update_cache: no
+    - name: Ensure Project Directory exists
+      file:
+        path: /home/star/app
+        state: directory
 
-    - name: Set Port to 8081 in ports.conf
+    - name: Copy index.html and Dockerfile to Node
       copy:
-        content: "Listen 8081"
-        dest: /etc/apache2/ports.conf
+        src: "{{ item }}"
+        dest: /home/star/app/
+      with_items:
+        - index.html
+        - Dockerfile
 
-    - name: Update VirtualHost to 8081
-      lineinfile:
-        path: /etc/apache2/sites-available/000-default.conf
-        regexp: '<VirtualHost \*:80>'
-        line: '<VirtualHost *:8081>'
-
-    - name: Restart and Enable Apache
-      service:
-        name: apache2
-        state: restarted
-        enabled: yes
+    - name: Build and Restart Docker Container
+      shell: |
+        cd /home/star/app
+        docker build -t myapp:latest .
+        docker rm -f myappcontainer || true
+        docker run -d --name myappcontainer -p 80:80 myapp:latest
