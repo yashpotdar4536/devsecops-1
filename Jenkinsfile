@@ -6,12 +6,24 @@ pipeline {
         LC_ALL = 'en_IN.UTF-8'
         LANG   = 'en_IN.UTF-8'
         LANGUAGE = 'en_IN.UTF-8'
+        SNYK_TOKEN = credentials('snyk-token')
     }
 
     stages {
         stage('GitHub Checkout') {
             steps {
                 git url: 'https://github.com/yashpotdar4536/devsecops-1.git', branch: 'main'
+            }
+        }
+
+        stage('Snyk Code Scan') {
+            steps {
+                script {
+                    echo "--- Step 1: Scanning Application Code ---"
+                    sh "snyk auth ${SNYK_TOKEN}"
+                    // Runs scan, returns 0 even if bugs found so pipeline continues
+                    sh 'snyk test --severity-threshold=high || true'
+                }
             }
         }
 
