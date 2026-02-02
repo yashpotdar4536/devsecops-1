@@ -1,23 +1,50 @@
-- name: Deploy Custom Website to Node Server
+- name: Full Production Deployment for Project Team
   hosts: all
   become: true
   tasks:
-    - name: Ensure Project Directory exists
+    # --- SECTION 1: DOCKER (Attractive UI on Port 80) ---
+    - name: Create App Directory on Node Server
       file:
-        path: /home/star/app
+        path: /home/star/devsecops-app
         state: directory
 
-    - name: Copy index.html and Dockerfile to Node
+    - name: Transfer Dashboard Files (HTML, CSS, Dockerfile)
       copy:
         src: "{{ item }}"
-        dest: /home/star/app/
+        dest: /home/star/devsecops-app/
       with_items:
         - index.html
+        - style.css
         - Dockerfile
 
-    - name: Build and Restart Docker Container
+    - name: Build and Run Docker Container
       shell: |
-        cd /home/star/app
+        cd /home/star/devsecops-app
         docker build -t myapp:latest .
         docker rm -f myappcontainer || true
         docker run -d --name myappcontainer -p 80:80 myapp:latest
+
+    # --- SECTION 2: NATIVE APACHE (Debian Page on Port 8081) ---
+    - name: Install Apache Web Server
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    - name: Change Apache Port to 8081
+      lineinfile:
+        path: /etc/apache2/ports.conf
+        regexp: '^Listen 80'
+        line: 'Listen 8081'
+
+    - name: Update Apache VirtualHost Port
+      lineinfile:
+        path: /etc/apache2/sites-available/000-default.conf
+        regexp: '<VirtualHost \*:80>'
+        line: '<VirtualHost *:8081>'
+
+    - name: Ensure Apache is Running and Restarted
+      service:
+        name: apache2
+        state: restarted
+        enabled: yes
