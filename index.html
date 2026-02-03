@@ -11,75 +11,68 @@
     <header>
         <div class="container">
             <div id="branding">
-                <h1><i class="fas fa-shield-virus"></i> <span class="highlight">SECURE</span> BUILD PIPELINE</h1>
+                <h1><span class="highlight">DevSecOps</span> CI/CD Pipeline</h1>
             </div>
-            <div class="header-info">
-                <span>ENV: <strong>PRODUCTION</strong></span>
-                <span>BUILD: <strong>v2.0.4</strong></span>
-            </div>
+            <nav>
+                <ul>
+                    <li>Environment: <strong>Production</strong></li>
+                    <li>Status: <span class="status-up">Operational</span></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
-    <section id="stats-bar">
+    <section id="showcase">
         <div class="container">
-            <div class="stat-item"><span class="label">Uptime:</span> <span class="value">99.9%</span></div>
-            <div class="stat-item"><span class="label">Last Scan:</span> <span class="value">Success</span></div>
-            <div class="stat-item"><span class="label">Threat Level:</span> <span class="value safe">Low</span></div>
+            <h1>Infrastructure as Code</h1>
+            <p>Automated Security Gates & Continuous Deployment</p>
+            <div class="badge-container">
+                <span class="badge">Secure Build</span>
+                <span class="badge">Containerized Runtime</span>
+            </div>
         </div>
     </section>
 
     <section id="main">
         <div class="container">
-            <div class="grid">
-                <div class="card">
-                    <h2><i class="fas fa-layer-group"></i> Infrastructure Stack</h2>
-                    <ul class="tool-list">
-                        <li><strong>CI/CD:</strong> Jenkins Pipeline Automation</li>
-                        <li><strong>Orchestration:</strong> Ansible Playbooks</li>
-                        <li><strong>Runtime:</strong> Docker Containerization</li>
-                        <li><strong>Base Image:</strong> Nginx Alpine (Hardened)</li>
-                    </ul>
+            <h2>Integrated Toolchain</h2>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <i class="fab fa-jenkins"></i>
+                    <h3>Jenkins</h3>
+                    <p>Pipeline Orchestration</p>
                 </div>
-
-                <div class="card">
-                    <h2><i class="fas fa-user-shield"></i> Security Gates</h2>
-                    <div class="gate-item">
-                        <span>Snyk (SAST)</span>
-                        <div class="progress-bar"><div class="progress green" style="width: 100%"></div></div>
-                    </div>
-                    <div class="gate-item">
-                        <span>Trivy (SCA)</span>
-                        <div class="progress-bar"><div class="progress green" style="width: 100%"></div></div>
-                    </div>
-                    <div class="gate-item">
-                        <span>OWASP Bench</span>
-                        <div class="progress-bar"><div class="progress blue" style="width: 85%"></div></div>
-                    </div>
+                <div class="tool-card">
+                    <i class="fab fa-docker"></i>
+                    <h3>Docker</h3>
+                    <p>Microservices Containerization</p>
                 </div>
-            </div>
-
-            <div class="card wide">
-                <h2><i class="fas fa-chart-area"></i> Observability & Monitoring</h2>
-                <div class="monitor-grid">
-                    <div class="monitor-box">
-                        <h4>Prometheus</h4>
-                        <p>Time-Series Data Collection</p>
-                    </div>
-                    <div class="monitor-box">
-                        <h4>Grafana</h4>
-                        <p>Visualization & Alerting</p>
-                    </div>
-                    <div class="monitor-box">
-                        <h4>Node Exporter</h4>
-                        <p>Hardware Metrics (Agent)</p>
-                    </div>
+                <div class="tool-card">
+                    <i class="fas fa-terminal"></i>
+                    <h3>Ansible</h3>
+                    <p>Configuration Management</p>
+                </div>
+                <div class="tool-card">
+                    <i class="fas fa-shield-halved"></i>
+                    <h3>Snyk & Trivy</h3>
+                    <p>Vulnerability Scanning</p>
+                </div>
+                <div class="tool-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Prometheus</h3>
+                    <p>System Metrics</p>
+                </div>
+                <div class="tool-card">
+                    <i class="fas fa-desktop"></i>
+                    <h3>Grafana</h3>
+                    <p>Observability Dashboard</p>
                 </div>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>Deployment Endpoint: 192.168.56.149 | DevSecOps Capstone 2026</p>
+        <p>Managed Deployment Node: 192.168.56.149 &copy; 2026</p>
     </footer>
 </body>
 </html>
