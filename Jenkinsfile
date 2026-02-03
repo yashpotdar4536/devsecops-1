@@ -2,7 +2,6 @@ pipeline {
     agent any
     
     environment {
-        // Fix for locale errors
         LC_ALL = 'en_IN.UTF-8'
         LANG   = 'en_IN.UTF-8'
         LANGUAGE = 'en_IN.UTF-8'
@@ -21,7 +20,6 @@ pipeline {
                 script {
                     echo "--- Step 1: Scanning Application Code ---"
                     sh "snyk auth ${SNYK_TOKEN}"
-                    // Runs scan, returns 0 even if bugs found so pipeline continues
                     sh 'snyk test --severity-threshold=high || true'
                 }
             }
@@ -38,12 +36,9 @@ pipeline {
             steps {
                 script {
                     echo "--- Phase 1: Filesystem Scan ---"
-                    // We set TMPDIR to the current workspace to use your 87GB free space
                     sh 'export TMPDIR=$WORKSPACE && trivy fs --severity CRITICAL --exit-code 1 .'
                     
                     echo "--- Phase 2: Image Scan ---"
-                    // --vuln-type os: Scans only the OS layers (avoids the heavy Java DB)
-                    // --no-progress: Keeps logs clean
                     sh 'export TMPDIR=$WORKSPACE && trivy image --severity CRITICAL --no-progress --vuln-type os --exit-code 1 myapp:latest'
                 }
             }
@@ -83,7 +78,6 @@ pipeline {
                  body: "Pipeline failed. Check Jenkins logs for Trivy findings or build errors."
         }
         always {
-            // Optional: Clean up workspace to save disk space after every run
             cleanWs()
         }
     }
