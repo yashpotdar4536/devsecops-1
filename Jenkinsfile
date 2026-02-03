@@ -49,7 +49,7 @@ pipeline {
             }
         }
 
-        stage('Deploy Nginx (Docker)') {
+        stage('Deploy Static Web-Page') {
             steps {
                 echo "Deploying Container to Port 80..."
                 sh 'docker rm -f myappcontainer || true'
